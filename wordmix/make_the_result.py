@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 import moviepy.editor
 import json
 from dataclasses import dataclass
@@ -11,11 +11,22 @@ class Word:
     confidence: float
     start_sec: float
     end_sec: float
+    previous: Optional["Word"]
+    next: Optional["Word"]
 
-words = [
-    Word(**word)
-    for word in json.load(open("recognized_words.json"))
-]
+    def __repr__(self):
+        return f"Word(word={self.word!r}, confidence={self.confidence!r}, start_sec={self.start_sec!r}, end_sec={self.end_sec!r})"
+
+raw_words = json.load(open("recognized_words.json"))
+
+last_word: Optional[Word] = None
+words = []
+for word in raw_words:
+    word = Word(**word, previous=last_word, next=None)
+    if last_word is not None:
+        last_word.next = word
+    last_word = word
+    words.append(word)
 
 words_dict: Dict[str, List[Word]] = {}
 
@@ -29,8 +40,21 @@ script = open("script.txt").read()
 
 result_parts = []
 
-for word in script.split():
+script_words = script.split()
+
+i = 0
+while i < len(script_words):
+    word = script_words[i]
     word = words_dict[word.casefold()][0]
-    result_parts.append(video.subclip(max(0, word.start_sec - 0.1), min(video.end, word.end_sec + 0.1)))
+    start = 0 if word.previous is None else word.previous.end_sec
+    while True:
+        end = word.end_sec
+        if word.next is not None and i + 1 < len(script_words) and word.next.word.casefold() == script_words[i + 1].casefold():
+            i += 1
+            word = word.next
+        else:
+            break
+    result_parts.append(video.subclip(start, end))
+    i += 1
 
 moviepy.editor.concatenate_videoclips(result_parts).write_videofile("result.mp4")
