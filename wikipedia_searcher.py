@@ -15,11 +15,13 @@ for term in terms:
         try:
             summary = wikipedia.summary(term)
         except wikipedia.DisambiguationError as e:
-            print(f"The term '{term}' is ambiguous. Disambiguate it by entering one of the following terms:")
+            print(f"The term '{term}' is ambiguous. Disambiguate it by entering one of the following terms, or emit an empty line to skip the term:")
             print("\n".join(e.options))
-            term = input()
+        except wikipedia.PageError:
+            print(f"The term '{term}' was not found. Enter the other term as a replacement or emit an empty line to skip the term:")
         else:
             break
+        term = input()
     results.append(summary.split("\n")[0])
 
 print("\n### -------------- ###\n")
