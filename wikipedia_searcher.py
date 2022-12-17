@@ -22,5 +22,5 @@ for term in terms:
             break
     results.append(summary.split("\n")[0])
 
-print("------------------")
+print("\n### -------------- ###\n")
 print("\n\n".join(results))
