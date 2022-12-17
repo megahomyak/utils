@@ -11,6 +11,16 @@ while True:
         break
 results = []
 for term in terms:
-    results.append(wikipedia.summary(term).split("\n")[0])
+    while True:
+        try:
+            summary = wikipedia.summary(term)
+        except wikipedia.DisambiguationError as e:
+            print(f"The term '{term}' is ambiguous. Disambiguate it by entering one of the following terms:")
+            print("\n".join(e.options))
+            term = input()
+        else:
+            break
+    results.append(summary.split("\n")[0])
 
+print("------------------")
 print("\n\n".join(results))
