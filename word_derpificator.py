@@ -8,6 +8,6 @@ def process_word(word):
         flags=re.IGNORECASE,
     )
 
-nickname = input("Enter a nickname: ")
+words = input("Enter the words: ")
 
-print(" ".join(process_word(word) for word in nickname.split()))
+print(" ".join(process_word(word) for word in words.split()))
