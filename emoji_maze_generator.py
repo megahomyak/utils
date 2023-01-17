@@ -37,8 +37,7 @@ if len(emojis) != 16:
 print("Would you like your emoji maze to be [compact] or [spacious]?")
 maze_type = input("Type in the [maze type] here: ")
 if maze_type not in ("compact", "spacious"):
-    print(f"Error: the maze type you provided (\"{maze_type}\") is not \"compact\" or \"spacious\".")
-    exit(1)
+    raise Exception(f"Error: the maze type you provided (\"{maze_type}\") is not \"compact\" or \"spacious\".")
 print("Type in the maze. Every number sign (#) represents a wall, every space ( ) represents a pathway. End with an empty line.")
 lines = []
 while True:
