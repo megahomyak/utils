@@ -1,4 +1,4 @@
-print("Type in the maze. Every number sign (#) represents a wall, every space ( ) represents a pathway. End with an empty line. Represent a starting position with S and an ending position with E.")
+print("Type in the maze. Every number sign (#) represents a wall, every space ( ) represents a pathway. End with an empty line. Represent a starting position with an \"S\" and an ending position with an \"E\".")
 lines = []
 start = None
 end = None
