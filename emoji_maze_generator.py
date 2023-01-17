@@ -1,31 +1,41 @@
+import random
+
 emojis = {}
 
 EMPTY_EMOJI = ":popgoes2:"
 
 
+def raiser(exc):
+    raise exc
+
+
+def end(direction):
+    return lambda: ":phi" + direction + random.choice(("Head", "Nub", "Tail", "Blob")) + ":"
+
+
 for combination, emoji in (
     # top, bottom, left, right
-    ((True, True, True, True), ":phiCross:"),
+    ((True, True, True, True), lambda: ":phiCross:"),
 
-    ((False, True, True, True), ":phiTopSplit:"),
-    ((True, False, True, True), ":phiBottomSplit:"),
-    ((True, True, False, True), ":phiLeftSplit:"),
-    ((True, True, True, False), ":phiRightSplit:"),
+    ((False, True, True, True), lambda: ":phiTopSplit:"),
+    ((True, False, True, True), lambda: ":phiBottomSplit:"),
+    ((True, True, False, True), lambda: ":phiLeftSplit:"),
+    ((True, True, True, False), lambda: ":phiRightSplit:"),
 
-    ((False, False, True, True), ":phiHori:"),
-    ((True, True, False, False), ":phiVerti:"),
+    ((False, False, True, True), lambda: ":phiHori:"),
+    ((True, True, False, False), lambda: ":phiVerti:"),
 
-    ((False, True, False, True), ":phiTopLeft:"),
-    ((True, False, False, True), ":phiBottomLeft:"),
-    ((False, True, True, False), ":phiTopRight:"),
-    ((True, False, True, False), ":phiBottomRight:"),
+    ((False, True, False, True), lambda: ":phiTopLeft:"),
+    ((True, False, False, True), lambda: ":phiBottomLeft:"),
+    ((False, True, True, False), lambda: ":phiTopRight:"),
+    ((True, False, True, False), lambda: ":phiBottomRight:"),
 
-    ((True, False, False, False), ":phiBottomNub:"),
-    ((False, True, False, False), ":phiTopNub:"),
-    ((False, False, True, False), ":phiRightNub:"),
-    ((False, False, False, True), ":phiLeftNub:"),
+    ((True, False, False, False), end("Bottom")),
+    ((False, True, False, False), end("Top")),
+    ((False, False, True, False), end("Right")),
+    ((False, False, False, True), end("Left")),
 
-    ((False, False, False, False), Exception("Walls with no neighbors are missing in the Phi emoji pack!"))
+    ((False, False, False, False), lambda: raiser(Exception("Walls with no neighbors are missing in the Phi emoji pack!")))
 ):
     if combination in emojis:
         raise Exception(f"The {combination} combination is mapped already!")
@@ -66,9 +76,7 @@ for y in range(len(lines)):
                 is_a_wall(x, y + 1),
                 is_a_wall(x - 1, y),
                 is_a_wall(x + 1, y)
-            )]
-            if isinstance(emoji, Exception):
-                raise emoji
+            )]()
         else:
             emoji = EMPTY_EMOJI
         emojis_maze[y][x] = emoji
