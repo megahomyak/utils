@@ -97,5 +97,5 @@ for cell_y in range(MAZE_HEIGHT):
             else:
                 arrow = EMPTY_SPACE
             maze[cell_y][cell_x] = arrow
-print(f"\nRules: start in the starting cell ({BEGINNING_MARK}), end in the ending cell ({END_MARK}). You can go in the direction of an arrow as many cells as you want. If you have nowhere to go or you landed on an empty spot ({EMPTY_SPACE}), the game is over.")
+print(f"\nRules: start from the cell immediately below the starting cell ({BEGINNING_MARK}), end at the ending cell ({END_MARK}). You can go in the direction of an arrow as many cells as you want. If you have nowhere to go or you landed on an empty spot ({EMPTY_SPACE}), the game is over.")
 print_the_maze()
