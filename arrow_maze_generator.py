@@ -8,7 +8,7 @@ ARROW_LEFT = ":HandPointLeft:"
 ARROW_RIGHT = ":HandPointRight:"
 ARROW_UP = ":HandPointUp:"
 ARROW_DOWN = ":HandPointDown:"
-EMPTY_SPACE = ":popgoes2:"  # If you stand on it, you lose
+EMPTY_SPACE = ":popgoes2:"
 
 MAZE_HEIGHT = 7
 MAZE_WIDTH = 7
