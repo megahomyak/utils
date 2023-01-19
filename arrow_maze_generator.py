@@ -8,7 +8,7 @@ ARROW_LEFT = "<"
 ARROW_RIGHT = ">"
 ARROW_UP = "^"
 ARROW_DOWN = "V"
-EMPTY_SPACE = " "
+EMPTY_SPACE = " "  # If you stand on it, you lose
 
 MAZE_HEIGHT = 10
 MAZE_WIDTH = 10
