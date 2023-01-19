@@ -10,8 +10,8 @@ ARROW_UP = "^"
 ARROW_DOWN = "V"
 EMPTY_SPACE = " "  # If you stand on it, you lose
 
-MAZE_HEIGHT = 10
-MAZE_WIDTH = 10
+MAZE_HEIGHT = 5
+MAZE_WIDTH = 5
 
 PATH_LENGTH = 10
 
