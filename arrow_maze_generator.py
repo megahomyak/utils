@@ -1,4 +1,5 @@
 import random
+from itertools import chain
 
 
 BEGINNING_MARK = "B"
@@ -57,14 +58,13 @@ path = get_the_right_path(0, 0, None, {(0, 0)}, [])
 if path is None:
     raise Exception("Path of the right length cannot be built!")
 maze = [[" " for _ in range(MAZE_WIDTH)] for _ in range(MAZE_HEIGHT)]
-cells = iter(path)
-old_x, old_y, old_arrow = next(cells)
-for new_x, new_y, new_arrow in path:
-    maze[old_y][old_x] = new_arrow
-    old_x = new_x
-    old_arrow = new_arrow
-    old_y = new_y
-end_x, end_y, _end_arrow = path[-1]
-maze[end_y][end_x] = END_MARK
+for (x, y), arrow in zip(
+    map(lambda cell: (cell[0], cell[1]), path),
+    chain(
+        map(lambda cell: cell[2], path[1:]),
+        iter((END_MARK,))
+    )
+):
+    maze[y][x] = arrow
 print(BEGINNING_MARK)
 print("\n".join("".join(row) for row in maze))
