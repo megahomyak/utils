@@ -1,9 +1,5 @@
 import random
 from itertools import chain
-from time import time
-
-seed = 1674139749
-random.seed(seed)
 
 
 BEGINNING_MARK = "B"
