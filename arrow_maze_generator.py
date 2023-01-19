@@ -2,13 +2,13 @@ import random
 from itertools import chain
 
 
-BEGINNING_MARK = "B"
-END_MARK = "E"
-ARROW_LEFT = "<"
-ARROW_RIGHT = ">"
-ARROW_UP = "^"
-ARROW_DOWN = "V"
-EMPTY_SPACE = " "  # If you stand on it, you lose
+BEGINNING_MARK = ":HandHello:"
+END_MARK = ":HandClap:"
+ARROW_LEFT = ":HandPointLeft:"
+ARROW_RIGHT = ":HandPointRight:"
+ARROW_UP = ":HandPointUp:"
+ARROW_DOWN = ":HandPointDown:"
+EMPTY_SPACE = ":popgoes2:"  # If you stand on it, you lose
 
 MAZE_HEIGHT = 7
 MAZE_WIDTH = 7
