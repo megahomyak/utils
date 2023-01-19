@@ -48,7 +48,7 @@ def get_next_position_variations(origin_x, origin_y, pointed_at):
 
 def get_the_right_path(origin_x, origin_y, arrow, pointed_at, path):
     path = path + [(origin_x, origin_y, arrow)]
-    if len(path) == 10:
+    if len(path) == PATH_LENGTH:
         return path
     variations = get_next_position_variations(origin_x, origin_y, pointed_at)
     random.shuffle(variations)
