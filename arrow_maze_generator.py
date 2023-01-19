@@ -66,7 +66,7 @@ def print_the_maze():
 path = get_the_right_path(0, 0, None, {(0, 0)}, [])
 occupied = set()
 if path is None:
-    raise Exception("Path of the right length cannot be built!")
+    raise Exception(f"The grid is not big enough to contain a path of length {PATH_LENGTH}!")
 maze = [[EMPTY_SPACE for _ in range(MAZE_WIDTH)] for _ in range(MAZE_HEIGHT)]
 for (x, y), arrow in zip(
     map(lambda cell: (cell[0], cell[1]), path),
