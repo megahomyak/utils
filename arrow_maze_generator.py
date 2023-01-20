@@ -10,8 +10,8 @@ ARROW_UP = ":HandPointUp:"
 ARROW_DOWN = ":HandPointDown:"
 EMPTY_SPACE = ":popgoes2:"
 
-MAZE_HEIGHT = 7
-MAZE_WIDTH = 7
+MAZE_HEIGHT = 10
+MAZE_WIDTH = 10
 
 PATH_LENGTH = 10
 
