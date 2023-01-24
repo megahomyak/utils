@@ -95,6 +95,7 @@ struct State {
     pub maze: Maze,
     pub position: Position,
     pub distance: Distance,
+    pub previous_position: Option<Position>,
 }
 
 fn print_the_maze(maze: &Maze) {
@@ -169,8 +170,8 @@ fn make_the_right_path(mut state: State) -> Option<Maze> {
             return None;
         }
     }
-    for (_position, mark_index) in adjacent(&state.maze, state.position.x, state.position.y)
-        .filter_map(|cell| {
+    for (adjacent_cell_position, adjacent_cell_mark_index) in
+        adjacent(&state.maze, state.position.x, state.position.y).filter_map(|cell| {
             if let (pos, Some(distance)) = cell {
                 Some((pos, distance))
             } else {
@@ -178,8 +179,13 @@ fn make_the_right_path(mut state: State) -> Option<Maze> {
             }
         })
     {
-        if get_mark_index(state.distance + 1) == *mark_index {
-            return None; // One of the adjacent cells can be accessed from the current one.
+        if get_mark_index(state.distance) == get_next_mark_index(*adjacent_cell_mark_index)
+            && !matches!(
+                state.previous_position,
+                Some(previous_position) if previous_position == adjacent_cell_position
+            )
+        {
+            return None; // The current cell can be accessed from one of the adjacent cells.
         }
     }
     let mut adjacent: Vec<_> = adjacent(&state.maze, state.position.x, state.position.y).collect();
@@ -191,6 +197,7 @@ fn make_the_right_path(mut state: State) -> Option<Maze> {
                 maze: state.maze.clone(),
                 position,
                 distance: state.distance + 1,
+                previous_position: Some(state.position),
             };
             if let maze @ Some(_) = make_the_right_path(new_state) {
                 return maze;
@@ -200,6 +207,7 @@ fn make_the_right_path(mut state: State) -> Option<Maze> {
             maze: state.maze,
             position: first_position,
             distance: state.distance + 1,
+            previous_position: Some(state.position),
         };
         if let maze @ Some(_) = make_the_right_path(new_state) {
             return maze;
@@ -213,6 +221,7 @@ fn main() {
         distance: Distance(0),
         position: Position { x: 0, y: 0 },
         maze: Matrix::new(None),
+        previous_position: None,
     })
     .expect("A maze of such size with such path length cannot be built!");
     println!("Solution:");
