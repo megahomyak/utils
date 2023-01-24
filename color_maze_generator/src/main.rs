@@ -220,7 +220,7 @@ fn main() {
     print!("\n\n");
     finish_the_maze(&mut maze);
     println!(
-        "Rules: get from {BEGINNING_MARK} to {END_MARK} by following the cells in this order: {}",
+        "Rules: get from {BEGINNING_MARK} to {END_MARK} by following the cells in this order: {}\n",
         join(MARKS.iter(), ", ")
     );
     println!("{}", BEGINNING_MARK);
