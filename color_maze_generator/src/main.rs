@@ -5,9 +5,9 @@ use rand::{seq::SliceRandom, thread_rng};
 // Must contain at least 3 elements for the algorithm to work properly, and this is also the
 // recommended amount.
 const MARKS: &'static [&'static str] = &[":PhiClueless:", ":PhiEmbarrassed:", ":PhiThreaten:"];
-const DESIRED_DISTANCE: u32 = 40;
-const MAZE_WIDTH: usize = 10;
-const MAZE_HEIGHT: usize = 10;
+const DESIRED_DISTANCE: u32 = 100;
+const MAZE_WIDTH: usize = 31;
+const MAZE_HEIGHT: usize = 31;
 const BEGINNING_MARK: &'static str = ":HandPointDown:";
 const END_MARK: &'static str = ":HandPointRight:";
 const EMPTY_SPOT: &'static str = ":popgoes2:";
@@ -153,64 +153,64 @@ fn finish_the_maze(maze: &mut Maze) {
     }
 }
 
-fn make_the_right_path(mut state: State) -> Option<Maze> {
-    let Some(self_distance @ None) = state.maze.get_mut(state.position.x, state.position.y) else {
-        return None; // We're either out of bounds or the cell is already taken.
+fn make_the_right_path(state: State) -> Option<Maze> {
+    let mut remaining = vec![state];
+    while let Some(mut state) = remaining.pop() {
+        let Some(self_distance @ None) = state.maze.get_mut(state.position.x, state.position.y) else {
+        continue; // We're either out of bounds or the cell is already taken.
     };
-    *self_distance = Some(get_mark_index(state.distance));
-    if state.position
-        == (Position {
-            x: MAZE_WIDTH - 1,
-            y: MAZE_HEIGHT - 1,
-        })
-    {
-        if state.distance.0 >= DESIRED_DISTANCE {
-            return Some(state.maze);
-        } else {
-            return None;
-        }
-    }
-    for (adjacent_cell_position, adjacent_cell_mark_index) in
-        adjacent(&state.maze, state.position.x, state.position.y).filter_map(|cell| {
-            if let (pos, Some(distance)) = cell {
-                Some((pos, distance))
-            } else {
-                None
-            }
-        })
-    {
-        if get_mark_index(state.distance) == get_next_mark_index(*adjacent_cell_mark_index)
-            && !matches!(
-                state.previous_position,
-                Some(previous_position) if previous_position == adjacent_cell_position
-            )
+        *self_distance = Some(get_mark_index(state.distance));
+        if state.position
+            == (Position {
+                x: MAZE_WIDTH - 1,
+                y: MAZE_HEIGHT - 1,
+            })
         {
-            return None; // The current cell can be accessed from one of the adjacent cells.
+            if state.distance.0 >= DESIRED_DISTANCE {
+                return Some(state.maze);
+            } else {
+                continue;
+            }
         }
-    }
-    let mut adjacent: Vec<_> = adjacent(&state.maze, state.position.x, state.position.y).collect();
-    adjacent.shuffle(&mut thread_rng());
-    let mut adjacent = adjacent.into_iter();
-    if let Some((first_position, _first_distance)) = adjacent.next() {
-        for (position, _distance) in adjacent {
+        for (adjacent_cell_position, adjacent_cell_mark_index) in
+            adjacent(&state.maze, state.position.x, state.position.y).filter_map(|cell| {
+                if let (pos, Some(distance)) = cell {
+                    Some((pos, distance))
+                } else {
+                    None
+                }
+            })
+        {
+            if get_mark_index(state.distance) == get_next_mark_index(*adjacent_cell_mark_index)
+                && !matches!(
+                    state.previous_position,
+                    Some(previous_position) if previous_position == adjacent_cell_position
+                )
+            {
+                continue; // The current cell can be accessed from one of the adjacent cells.
+            }
+        }
+        let mut adjacent: Vec<_> =
+            adjacent(&state.maze, state.position.x, state.position.y).collect();
+        adjacent.shuffle(&mut thread_rng());
+        let mut adjacent = adjacent.into_iter();
+        if let Some((first_position, _first_distance)) = adjacent.next() {
+            for (position, _distance) in adjacent {
+                let new_state = State {
+                    maze: state.maze.clone(),
+                    position,
+                    distance: state.distance + 1,
+                    previous_position: Some(state.position),
+                };
+                remaining.push(new_state);
+            }
             let new_state = State {
-                maze: state.maze.clone(),
-                position,
+                maze: state.maze,
+                position: first_position,
                 distance: state.distance + 1,
                 previous_position: Some(state.position),
             };
-            if let maze @ Some(_) = make_the_right_path(new_state) {
-                return maze;
-            }
-        }
-        let new_state = State {
-            maze: state.maze,
-            position: first_position,
-            distance: state.distance + 1,
-            previous_position: Some(state.position),
-        };
-        if let maze @ Some(_) = make_the_right_path(new_state) {
-            return maze;
+            remaining.push(new_state);
         }
     }
     None
