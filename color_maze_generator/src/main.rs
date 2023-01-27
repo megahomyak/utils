@@ -4,13 +4,73 @@ use rand::{seq::SliceRandom, thread_rng};
 
 // Must contain at least 3 elements for the algorithm to work properly, and this is also the
 // recommended amount.
-const MARKS: &'static [&'static str] = &[":PhiClueless:", ":PhiEmbarrassed:", ":PhiThreaten:"];
-const DESIRED_DISTANCE: u32 = 100;
-const MAZE_WIDTH: usize = 31;
-const MAZE_HEIGHT: usize = 31;
+const MARKS: &'static [&'static str] = &[":PhiClown:", ":PhiConcerned:", ":PhiLmao:"];
+const DESIRED_DISTANCE: u32 = 70;
+const MAZE_WIDTH: usize = 25;
+const MAZE_HEIGHT: usize = 14;
 const BEGINNING_MARK: &'static str = ":HandPointDown:";
 const END_MARK: &'static str = ":HandPointRight:";
 const EMPTY_SPOT: &'static str = ":popgoes2:";
+
+trait GenerationStrategy {
+    fn the_current_cell_matches(&self, state: &State) -> bool;
+    fn the_current_cell_matches_for_filling(&self, maze: &Maze, pos: Position) -> bool;
+}
+
+struct RectangleGenerationStrategy;
+
+impl GenerationStrategy for RectangleGenerationStrategy {
+    fn the_current_cell_matches_for_filling(&self, maze: &Maze, position: Position) -> bool {
+        true
+    }
+
+    fn the_current_cell_matches(&self, state: &State) -> bool {
+        for (adjacent_cell_position, adjacent_cell_mark_index) in
+            adjacent(&state.maze, state.position.x, state.position.y).filter_map(|cell| {
+                if let (pos, Some(distance)) = cell {
+                    Some((pos, distance))
+                } else {
+                    None
+                }
+            })
+        {
+            if get_mark_index(state.distance) == get_next_mark_index(*adjacent_cell_mark_index)
+                && !matches!(
+                    state.previous_position,
+                    Some(previous_position) if previous_position == adjacent_cell_position
+                )
+            {
+                return false; // The current cell can be accessed from one of the adjacent cells.
+            }
+        }
+        true
+    }
+}
+
+struct PatternGenerationStrategy<const N: usize> {
+    pattern: [&'static str; N],
+}
+
+impl<const N: usize> GenerationStrategy for PatternGenerationStrategy<N> {
+    fn the_current_cell_matches(&self, state: &State) -> bool {
+        if self.pattern[state.position.y]
+            .chars()
+            .nth(state.position.x)
+            .unwrap()
+            == ' '
+        {
+            return false;
+        }
+        RectangleGenerationStrategy {}.the_current_cell_matches(state)
+    }
+
+    fn the_current_cell_matches_for_filling(&self, maze: &Maze, position: Position) -> bool {
+        if self.pattern[position.y].chars().nth(position.x).unwrap() == ' ' {
+            return false;
+        }
+        RectangleGenerationStrategy {}.the_current_cell_matches_for_filling(maze, position)
+    }
+}
 
 fn join<T: AsRef<str>, I: Iterator<Item = T>>(mut i: I, separator: &str) -> String {
     let mut s = String::new();
@@ -127,9 +187,12 @@ fn print_mark_indexes(maze: &Maze) {
     }
 }
 
-fn finish_the_maze(maze: &mut Maze) {
+fn finish_the_maze(maze: &mut Maze, strategy: &impl GenerationStrategy) {
     for x in 0..MAZE_WIDTH {
         for y in 0..MAZE_HEIGHT {
+            if !strategy.the_current_cell_matches_for_filling(maze, Position { x, y }) {
+                continue;
+            }
             let None = maze.get(x, y).unwrap() else { continue; };
             let mut current_distance = None;
             let mut mark_indexes: Vec<_> = (0..MARKS.len()).collect();
@@ -153,12 +216,12 @@ fn finish_the_maze(maze: &mut Maze) {
     }
 }
 
-fn make_the_right_path(state: State) -> Option<Maze> {
+fn make_the_right_path(state: State, strategy: &impl GenerationStrategy) -> Option<Maze> {
     let mut remaining = vec![state];
     while let Some(mut state) = remaining.pop() {
         let Some(self_distance @ None) = state.maze.get_mut(state.position.x, state.position.y) else {
-        continue; // We're either out of bounds or the cell is already taken.
-    };
+            continue; // We're either out of bounds or the cell is already taken.
+        };
         *self_distance = Some(get_mark_index(state.distance));
         if state.position
             == (Position {
@@ -172,23 +235,8 @@ fn make_the_right_path(state: State) -> Option<Maze> {
                 continue;
             }
         }
-        for (adjacent_cell_position, adjacent_cell_mark_index) in
-            adjacent(&state.maze, state.position.x, state.position.y).filter_map(|cell| {
-                if let (pos, Some(distance)) = cell {
-                    Some((pos, distance))
-                } else {
-                    None
-                }
-            })
-        {
-            if get_mark_index(state.distance) == get_next_mark_index(*adjacent_cell_mark_index)
-                && !matches!(
-                    state.previous_position,
-                    Some(previous_position) if previous_position == adjacent_cell_position
-                )
-            {
-                continue; // The current cell can be accessed from one of the adjacent cells.
-            }
+        if !strategy.the_current_cell_matches(&state) {
+            continue;
         }
         let mut adjacent: Vec<_> =
             adjacent(&state.maze, state.position.x, state.position.y).collect();
@@ -217,17 +265,35 @@ fn make_the_right_path(state: State) -> Option<Maze> {
 }
 
 fn main() {
+    let strat = PatternGenerationStrategy {
+        pattern: [
+            "#########################",
+            "#########################",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "########             ####",
+            "#########################",
+            "#########################",
+        ],
+    };
     let mut maze = make_the_right_path(State {
         distance: Distance(0),
         position: Position { x: 0, y: 0 },
         maze: Matrix::new(None),
         previous_position: None,
-    })
+    }, &strat)
     .expect("A maze of such size with such path length cannot be built!");
     println!("Solution:");
     print_the_maze(&maze);
     print!("\n\n");
-    finish_the_maze(&mut maze);
+    finish_the_maze(&mut maze, &strat);
     println!(
         "Rules: get from {BEGINNING_MARK} to {END_MARK} by following the cells in this order: {}. Only vertical and horizontal moves are allowed!\n",
         join(MARKS.iter(), ", ")
