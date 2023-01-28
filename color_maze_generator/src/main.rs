@@ -5,9 +5,9 @@ use rand::{seq::SliceRandom, thread_rng};
 // Must contain at least 3 elements for the algorithm to work properly, and this is also the
 // recommended amount.
 const MARKS: &'static [&'static str] = &[":PhiClown:", ":PhiConcerned:", ":PhiLmao:"];
-const DESIRED_DISTANCE: u32 = 70;
-const MAZE_WIDTH: usize = 25;
-const MAZE_HEIGHT: usize = 14;
+const DESIRED_DISTANCE: u32 = 400;
+const MAZE_WIDTH: usize = 30;
+const MAZE_HEIGHT: usize = 30;
 const BEGINNING_MARK: &'static str = ":HandPointDown:";
 const END_MARK: &'static str = ":HandPointRight:";
 const EMPTY_SPOT: &'static str = ":popgoes2:";
@@ -20,7 +20,7 @@ trait GenerationStrategy {
 struct RectangleGenerationStrategy;
 
 impl GenerationStrategy for RectangleGenerationStrategy {
-    fn the_current_cell_matches_for_filling(&self, maze: &Maze, position: Position) -> bool {
+    fn the_current_cell_matches_for_filling(&self, _maze: &Maze, _position: Position) -> bool {
         true
     }
 
@@ -265,24 +265,7 @@ fn make_the_right_path(state: State, strategy: &impl GenerationStrategy) -> Opti
 }
 
 fn main() {
-    let strat = PatternGenerationStrategy {
-        pattern: [
-            "#########################",
-            "#########################",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "########             ####",
-            "#########################",
-            "#########################",
-        ],
-    };
+    let strat = RectangleGenerationStrategy;
     let mut maze = make_the_right_path(State {
         distance: Distance(0),
         position: Position { x: 0, y: 0 },
