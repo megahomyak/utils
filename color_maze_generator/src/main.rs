@@ -5,9 +5,14 @@ use rand::{seq::SliceRandom, thread_rng};
 // Must contain at least 3 elements for the algorithm to work properly, and this is also the
 // recommended amount.
 const MARKS: &'static [&'static str] = &[":PhiClown:", ":PhiConcerned:", ":PhiLmao:"];
-const DESIRED_DISTANCE: u32 = 400;
-const MAZE_WIDTH: usize = 30;
-const MAZE_HEIGHT: usize = 30;
+// WARNING: setting the maze-logic-related variables to some numbers may produce overwhelmingly
+// long generation times, so long that they probably won't generate in your lifetime.
+// Recommendations for setting these numbers: both maze width and maze height have to be odd
+// numbers; the working distances are: 8, 100, 300. I have no idea why this affects the algorithm.
+// Also, if you re-run the program multiple times, it may generate you a maze immediately.
+const DESIRED_DISTANCE: u32 = 300;
+const MAZE_WIDTH: usize = 31;
+const MAZE_HEIGHT: usize = 31;
 const BEGINNING_MARK: &'static str = ":HandPointDown:";
 const END_MARK: &'static str = ":HandPointRight:";
 const EMPTY_SPOT: &'static str = ":popgoes2:";
