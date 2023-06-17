@@ -4,7 +4,7 @@ import datetime
 import time
 
 tasks = [
-    {"name": f"Task {i}", "time": "0:07"}
+    {"name": f"Task {i}", "time": "8:00"}
     for i in range(1, 28)
 ]
 
