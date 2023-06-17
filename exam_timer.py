@@ -4,7 +4,7 @@ import datetime
 import time
 
 tasks = [
-    {"name": f"Task {i}", "time": "8:00"}
+    {"name": f"Task {i}", "time": "0:07"}
     for i in range(1, 28)
 ]
 
@@ -27,7 +27,7 @@ print()
 
 for task in tasks:
     end_time = now() + datetime_to_timedelta(datetime.datetime.strptime(task["time"], "%M:%S"))
-    while now() < end_time:
+    while True:
         remaining_time = end_time - now()
         update_timer(task["name"], remaining_time)
         if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
