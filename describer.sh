@@ -12,4 +12,5 @@ EOF
 python ~/i/simple_chat/chat.py "$dfile"
 read _role new_prompt < <(tail -n 1 "$dfile")
 rm "$dfile"
+echo "$new_prompt"
 termux-clipboard-set "$new_prompt"
