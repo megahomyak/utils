@@ -4,18 +4,18 @@ use rand::{seq::SliceRandom, thread_rng};
 
 // Must contain at least 3 elements for the algorithm to work properly, and this is also the
 // recommended amount.
-const MARKS: &'static [&'static str] = &[":CacoTired:", ":CacoDisgust:", ":CacoBored:"];
+const MARKS: &'static [&'static str] = &[":Fredchamp:", ":POGFISH:", ":SlightlyLargerSpog2:"];
 // WARNING: setting the maze-logic-related variables to some numbers may produce overwhelmingly
 // long generation times, so long that they probably won't generate in your lifetime.
 // Recommendations for setting these numbers: both maze width and maze height have to be odd
 // numbers; the working distances are: 8, 100, 300. I have no idea why this affects the algorithm.
 // Also, if you re-run the program multiple times, it may generate you a maze immediately.
-const DESIRED_DISTANCE: u32 = 300;
-const MAZE_WIDTH: usize = 10;
-const MAZE_HEIGHT: usize = 100;
-const BEGINNING_MARK: &'static str = ":HandPointDown:";
-const END_MARK: &'static str = ":HandPointRight:";
-const EMPTY_SPOT: &'static str = ":popgoes2:";
+const DESIRED_DISTANCE: u32 = 13;
+const MAZE_WIDTH: usize = 11;
+const MAZE_HEIGHT: usize = 11;
+const BEGINNING_MARK: &'static str = ":loafStare:";
+const END_MARK: &'static str = ":kcpCake:";
+const EMPTY_SPOT: &'static str = ":black_large_square:";
 
 trait GenerationStrategy {
     fn the_current_cell_matches(&self, state: &State) -> bool;
