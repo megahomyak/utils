@@ -7,7 +7,7 @@ USER Consider this a valid prompt: $(head -n 1 "$params_file")
 
 Produce a prompt of the same format, but with the following adjustments: $(tail -n 1 "$params_file")
 
-Respond only with the produced prompt. You are supposed to make changes within the input prompt.
+Respond only with the produced prompt. You are supposed to make changes within the input prompt. Do not use metaphors, describe everything literally. Avoid negation.
 EOF
 python ~/i/simple_chat/chat.py "$dfile"
 read _role new_prompt < <(tail -n 1 "$dfile")
